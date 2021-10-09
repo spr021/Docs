@@ -91,6 +91,9 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
 }))
 
 export default function Profile() {
@@ -109,7 +112,7 @@ export default function Profile() {
 
   const signOut = () => {
     auth.signOut().then(() => {
-      history.push("/login")
+      history.push("/sign-in")
     }).catch((error) => {
       alert(
         `signOut in fail :(.`
@@ -163,7 +166,7 @@ export default function Profile() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (!user) {
-        history.push("/login")
+        history.push("/sign-in")
       }
     })
   },[auth, history])
@@ -200,9 +203,9 @@ export default function Profile() {
           <Typography variant="h6" gutterBottom>
             Profile
           </Typography>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} justifyContent="space-around">
             <Grid item xs={12} md={6}>
-              <TextField error={displayName.error} onBlur={save} onChange={(e) => setDisplayName({...displayName, value: e.target.value})} variant="outlined" required  label="Full name" fullWidth autoComplete="cc-name" />
+              <TextField error={displayName.error} onChange={(e) => setDisplayName({...displayName, value: e.target.value})} variant="outlined" required  label="Full name" fullWidth autoComplete="cc-name" />
             </Grid>
             <Grid item xs={12} md={6}>
               <Badge
@@ -216,6 +219,15 @@ export default function Profile() {
               </Badge>
             </Grid>
           </Grid>
+          <Button
+              onClick={save}
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Confirm
+            </Button>
         </Paper>
       </main>
     </div>

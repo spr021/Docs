@@ -80,7 +80,7 @@ export default function Home() {
 
   const signOut = () => {
     firebase.auth().signOut().then(() => {
-      history.push("/login");
+      history.push("/sign-in");
     }).catch((error) => {
       alert(
         `signOut in fail :(.`
@@ -105,7 +105,7 @@ export default function Home() {
           setDocs(objectList)
         })
       } else {
-        history.push("/login");
+        history.push("/sign-in");
       }
     });
   },[history])

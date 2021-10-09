@@ -83,7 +83,7 @@ export default function Doc() {
 
   const signOut = () => {
     firebase.auth().signOut().then(() => {
-      history.push("/login")
+      history.push("/sign-in")
     }).catch((error) => {
       alert(
         `signOut in fail :(.`
