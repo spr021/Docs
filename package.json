@@ -1,7 +1,7 @@
 {
   "name": "docs",
   "version": "0.1.0",
-  "homepage": "http://hadishesabz.github.io",
+  "homepage": "http://spr021.github.io/Docs",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.12.3",
