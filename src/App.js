@@ -6,7 +6,6 @@ import ForgetPassword from "./view/pages/ForgetPassword"
 import NewDoc from "./view/pages/NewDoc"
 import Doc from "./view/pages/Doc"
 import Profile from "./view/pages/Profile"
-import firebase from "./firebase"
 
 function App() {
   return (
