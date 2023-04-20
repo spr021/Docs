@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh",
   },
   image: {
-    backgroundImage: "url(https://source.unsplash.com/random)",
+    backgroundImage: "url(https://unsplash.it/1920/1080?random)",
     backgroundRepeat: "no-repeat",
     backgroundColor:
       theme.palette.type === "light"
