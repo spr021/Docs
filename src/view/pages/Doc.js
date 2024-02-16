@@ -1,13 +1,14 @@
 import MUIRichTextEditor from "mui-rte"
 import React from "react"
-import AppBar from "@material-ui/core/AppBar"
-import Toolbar from "@material-ui/core/Toolbar"
-import IconButton from "@material-ui/core/IconButton"
-import Typography from "@material-ui/core/Typography"
-import { alpha, makeStyles } from "@material-ui/core/styles"
-import MenuIcon from "@material-ui/icons/Menu"
-import ArrowBackIcon from "@material-ui/icons/ArrowBack"
-import { Box, Button } from "@material-ui/core"
+import AppBar from "@mui/material/AppBar"
+import Toolbar from "@mui/material/Toolbar"
+import IconButton from "@mui/material/IconButton"
+import Typography from "@mui/material/Typography"
+import { alpha } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
+import MenuIcon from "@mui/icons-material/Menu"
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+import { Box, Button } from "@mui/material"
 import { useNavigate, useLocation } from "react-router-dom"
 import { getAuth, signOut } from "firebase/auth"
 
@@ -64,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("sm")]: {
@@ -101,14 +102,14 @@ export default function Doc() {
             className={classes.menuButton}
             color="inherit"
             aria-label="open drawer"
-          >
+            size="large">
             <MenuIcon />
           </IconButton>
           <IconButton
             onClick={() => navigate("/")}
             className={classes.menuButton}
             color="inherit"
-          >
+            size="large">
             <ArrowBackIcon />
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
@@ -124,5 +125,5 @@ export default function Doc() {
         <div style={{ width: 100, height: 50 }}></div>
       </Box>
     </div>
-  )
+  );
 }

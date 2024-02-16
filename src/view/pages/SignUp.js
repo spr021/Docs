@@ -1,14 +1,14 @@
 import React, { useState } from "react"
-import Avatar from "@material-ui/core/Avatar"
-import Button from "@material-ui/core/Button"
-import CssBaseline from "@material-ui/core/CssBaseline"
-import TextField from "@material-ui/core/TextField"
-import Paper from "@material-ui/core/Paper"
-import Box from "@material-ui/core/Box"
-import Grid from "@material-ui/core/Grid"
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
-import Typography from "@material-ui/core/Typography"
-import { makeStyles } from "@material-ui/core/styles"
+import Avatar from "@mui/material/Avatar"
+import Button from "@mui/material/Button"
+import CssBaseline from "@mui/material/CssBaseline"
+import TextField from "@mui/material/TextField"
+import Paper from "@mui/material/Paper"
+import Box from "@mui/material/Box"
+import Grid from "@mui/material/Grid"
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
+import Typography from "@mui/material/Typography"
+import makeStyles from '@mui/styles/makeStyles';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundImage: "url(https://source.unsplash.com/random)",
     backgroundRepeat: "no-repeat",
     backgroundColor:
-      theme.palette.type === "light"
+      theme.palette.mode === "light"
         ? theme.palette.grey[50]
         : theme.palette.grey[900],
     backgroundSize: "cover",

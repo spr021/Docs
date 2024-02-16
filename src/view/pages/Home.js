@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react"
-import AppBar from "@material-ui/core/AppBar"
-import Toolbar from "@material-ui/core/Toolbar"
-import IconButton from "@material-ui/core/IconButton"
-import Typography from "@material-ui/core/Typography"
-import InputBase from "@material-ui/core/InputBase"
-import { alpha, makeStyles } from "@material-ui/core/styles"
-import MenuIcon from "@material-ui/icons/Menu"
-import SearchIcon from "@material-ui/icons/Search"
-import AddIcon from "@material-ui/icons/Add"
-import { Avatar, Box, Button } from "@material-ui/core"
+import AppBar from "@mui/material/AppBar"
+import Toolbar from "@mui/material/Toolbar"
+import IconButton from "@mui/material/IconButton"
+import Typography from "@mui/material/Typography"
+import InputBase from "@mui/material/InputBase"
+import { alpha } from "@mui/material/styles";
+import makeStyles from '@mui/styles/makeStyles';
+import MenuIcon from "@mui/icons-material/Menu"
+import SearchIcon from "@mui/icons-material/Search"
+import AddIcon from "@mui/icons-material/Add"
+import { Avatar, Box, Button } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import Doc from "../components/Doc"
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
@@ -59,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("sm")]: {
@@ -125,7 +126,7 @@ export default function Home() {
             className={classes.menuButton}
             color="inherit"
             aria-label="open drawer"
-          >
+            size="large">
             <MenuIcon />
           </IconButton>
           <Avatar
@@ -142,7 +143,7 @@ export default function Home() {
             className={classes.menuButton}
             color="inherit"
             aria-label="open drawer"
-          >
+            size="large">
             <AddIcon />
           </IconButton>
           <div className={classes.search}>
@@ -174,5 +175,5 @@ export default function Home() {
         ))}
       </Box>
     </div>
-  )
+  );
 }

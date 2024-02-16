@@ -6,21 +6,43 @@ import ForgetPassword from "./view/pages/ForgetPassword"
 import NewDoc from "./view/pages/NewDoc"
 import Doc from "./view/pages/Doc"
 import Profile from "./view/pages/Profile"
+import { ThemeProvider, StyledEngineProvider, createTheme } from "@mui/material/styles";
+import { red } from "@material-ui/core/colors"
+import { CssBaseline } from "@material-ui/core"
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#556cd6',
+    },
+    secondary: {
+      main: '#19857b',
+    },
+    error: {
+      main: red.A400,
+    },
+  },
+});
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/new" element={<NewDoc />} />
-        <Route path="/doc/:title" element={<Doc />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
-    </Router>
-  )
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+      <CssBaseline />
+        <Router>
+          <Routes>
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/forget-password" element={<ForgetPassword />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/new" element={<NewDoc />} />
+            <Route path="/doc/:title" element={<Doc />} />
+            <Route path="/profile" element={<Profile />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </StyledEngineProvider>
+  );
 }
 
 export default App

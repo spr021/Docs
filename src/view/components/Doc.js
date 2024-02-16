@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react"
-import { makeStyles } from "@material-ui/core/styles"
-import Card from "@material-ui/core/Card"
-import CardHeader from "@material-ui/core/CardHeader"
-import CardMedia from "@material-ui/core/CardMedia"
-import CardContent from "@material-ui/core/CardContent"
-import CardActions from "@material-ui/core/CardActions"
-import Avatar from "@material-ui/core/Avatar"
-import IconButton from "@material-ui/core/IconButton"
-import Typography from "@material-ui/core/Typography"
-import { red } from "@material-ui/core/colors"
-import FavoriteIcon from "@material-ui/icons/Favorite"
-import ShareIcon from "@material-ui/icons/Share"
-import MoreVertIcon from "@material-ui/icons/MoreVert"
-import { Tooltip } from "@material-ui/core"
+import makeStyles from '@mui/styles/makeStyles';
+import Card from "@mui/material/Card"
+import CardHeader from "@mui/material/CardHeader"
+import CardMedia from "@mui/material/CardMedia"
+import CardContent from "@mui/material/CardContent"
+import CardActions from "@mui/material/CardActions"
+import Avatar from "@mui/material/Avatar"
+import IconButton from "@mui/material/IconButton"
+import Typography from "@mui/material/Typography"
+import { red } from "@mui/material/colors"
+import FavoriteIcon from "@mui/icons-material/Favorite"
+import ShareIcon from "@mui/icons-material/Share"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
+import { Tooltip } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import { getDownloadURL, getStorage, ref } from "firebase/storage"
 
@@ -88,7 +88,7 @@ export default function Doc(props) {
           </Tooltip>
         }
         action={
-          <IconButton onClick={removeOnClick} aria-label="settings">
+          <IconButton onClick={removeOnClick} aria-label="settings" size="large">
             <MoreVertIcon />
           </IconButton>
         }
@@ -111,13 +111,13 @@ export default function Doc(props) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton onClick={removeOnClick} aria-label="add to favorites">
+        <IconButton onClick={removeOnClick} aria-label="add to favorites" size="large">
           <FavoriteIcon />
         </IconButton>
-        <IconButton onClick={removeOnClick} aria-label="share">
+        <IconButton onClick={removeOnClick} aria-label="share" size="large">
           <ShareIcon />
         </IconButton>
       </CardActions>
     </Card>
-  )
+  );
 }
