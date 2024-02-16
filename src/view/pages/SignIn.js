@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
-import CssBaseline from "@mui/material/CssBaseline"
 import TextField from "@mui/material/TextField"
 import FormControlLabel from "@mui/material/FormControlLabel"
 import Checkbox from "@mui/material/Checkbox"
@@ -10,59 +9,14 @@ import Box from "@mui/material/Box"
 import Grid from "@mui/material/Grid"
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
-import makeStyles from '@mui/styles/makeStyles';
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © "}
-      <Link color="inherit" href="https://spr021.github.io/Docs/">
-        Saber Pourrahimi
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  )
-}
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: "100vh",
-  },
-  image: {
-    backgroundImage: "url(https://unsplash.it/1920/1080?random)",
-    backgroundRepeat: "no-repeat",
-    backgroundColor:
-      theme.palette.mode === "light"
-        ? theme.palette.grey[50]
-        : theme.palette.grey[900],
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  },
-  paper: {
-    margin: theme.spacing(8, 4),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}))
+import RandomWallpaper from "../components/RandomWallpaper"
+import { FormControl } from "@mui/material"
+import Copyright from "../components/Copyright"
 
 export default function SignInSide() {
-  const classes = useStyles()
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -112,18 +66,35 @@ export default function SignInSide() {
   }
 
   return (
-    <Grid container component="main" className={classes.root}>
-      <CssBaseline />
-      <Grid item xs={false} sm={4} md={7} className={classes.image} />
+    <Grid container component="main" sx={{ height: "100vh" }}>
+      <RandomWallpaper />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
+        <Box
+          sx={{
+            margin: (theme) => theme.spacing(8, 4),
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Avatar
+            sx={{
+              margin: (theme) => theme.spacing(1),
+              backgroundColor: (theme) => theme.palette.secondary.main,
+            }}
+          >
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <FormControl
+            sx={{
+              width: "100%", // Fix IE 11 issue.
+              marginTop: (theme) => theme.spacing(1),
+            }}
+            noValidate
+          >
             <TextField
               onChange={(e) => setEmail(e.target.value)}
               variant="outlined"
@@ -159,7 +130,7 @@ export default function SignInSide() {
               fullWidth
               variant="contained"
               color="primary"
-              className={classes.submit}
+              sx={{ margin: (theme) => theme.spacing(3, 0, 2) }}
             >
               Sign In
             </Button>
@@ -183,13 +154,13 @@ export default function SignInSide() {
                 onClick={logInWithTest}
                 variant="outlined"
                 color="primary"
-                className={classes.submit}
+                sx={{ margin: (theme) => theme.spacing(3, 0, 2) }}
               >
                 Sign In With Test User
               </Button>
             </Box>
-          </form>
-        </div>
+          </FormControl>
+        </Box>
       </Grid>
     </Grid>
   )

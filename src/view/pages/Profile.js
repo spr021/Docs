@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react"
+import { styled } from "@mui/material/styles"
 import AppBar from "@mui/material/AppBar"
 import Toolbar from "@mui/material/Toolbar"
 import IconButton from "@mui/material/IconButton"
 import Typography from "@mui/material/Typography"
-import { alpha } from "@mui/material/styles";
-import makeStyles from '@mui/styles/makeStyles';
 import MenuIcon from "@mui/icons-material/Menu"
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate"
 import {
   Avatar,
   Badge,
+  Box,
   Button,
   Grid,
+  Input,
   Paper,
   TextField,
 } from "@mui/material"
@@ -24,94 +25,36 @@ import {
 } from "firebase/auth"
 import { getDatabase, ref, set } from "firebase/database"
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
+const Title = styled(Typography)(({ theme }) => ({
+  flexGrow: 1,
+  display: "none",
+  [theme.breakpoints.up("sm")]: {
+    display: "block",
   },
-  layout: {
-    width: "auto",
-    marginLeft: theme.spacing(2),
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-      width: 600,
-      marginLeft: "auto",
-      marginRight: "auto",
-    },
+}))
+
+const Main = styled(Box)(({ theme }) => ({
+  width: "auto",
+  marginLeft: theme.spacing(2),
+  marginRight: theme.spacing(2),
+  [theme.breakpoints.up(600)]: {
+    width: 600,
+    marginLeft: "auto",
+    marginRight: "auto",
   },
-  paper: {
+  "& .MuiPaper-root": {
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
     padding: theme.spacing(2),
-    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+    [theme.breakpoints.up(600)]: {
       marginTop: theme.spacing(6),
       marginBottom: theme.spacing(6),
       padding: theme.spacing(3),
     },
   },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "block",
-    },
-  },
-  search: {
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    marginRight: 20,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(1),
-      width: "auto",
-    },
-  },
-  searchIcon: {
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  input: {
-    display: "none",
-  },
-  inputRoot: {
-    color: "inherit",
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
 }))
 
 export default function Profile() {
-  const classes = useStyles()
   const navigate = useNavigate()
   const [displayName, setDisplayName] = useState({
     value: "",
@@ -195,15 +138,20 @@ export default function Profile() {
 
   const badgeContent = (
     <>
-      <input
+      <Input
+        inputProps={{ "aria-label": "upload picture", accept: "image/*" }}
+        sx={{ display: "none" }}
         onChange={handleUploadClick}
-        accept="image/*"
-        className={classes.input}
         id="icon-button-file"
         type="file"
       />
       <label htmlFor="icon-button-file">
-        <IconButton color="primary" aria-label="upload picture" component="span" size="large">
+        <IconButton
+          color="primary"
+          aria-label="upload picture"
+          component="span"
+          size="large"
+        >
           <AddPhotoAlternateIcon />
         </IconButton>
       </label>
@@ -211,27 +159,28 @@ export default function Profile() {
   )
 
   return (
-    <div className={classes.root}>
+    <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
           <IconButton
             edge="start"
-            className={classes.menuButton}
+            sx={{ mr: (theme) => theme.spacing(2) }}
             color="inherit"
             aria-label="open drawer"
-            size="large">
+            size="large"
+          >
             <MenuIcon />
           </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
+          <Title variant="h6" noWrap>
             Completing your profile
-          </Typography>
+          </Title>
           <Button onClick={sign_Out} color="inherit">
             Sign Out
           </Button>
         </Toolbar>
       </AppBar>
-      <main className={classes.layout}>
-        <Paper className={classes.paper}>
+      <Main component={"main"}>
+        <Paper>
           <Typography variant="h6" gutterBottom>
             Profile
           </Typography>
@@ -259,7 +208,7 @@ export default function Profile() {
               >
                 <Avatar
                   variant="rounded"
-                  className={classes.avatar}
+                  sx={{ width: 100, height: 100 }}
                   alt={displayName.value}
                   src={photoURL.selectedFile}
                 />
@@ -271,12 +220,12 @@ export default function Profile() {
             fullWidth
             variant="contained"
             color="primary"
-            className={classes.submit}
+            sx={{ margin: (theme) => theme.spacing(3, 0, 2) }}
           >
             Confirm
           </Button>
         </Paper>
-      </main>
-    </div>
-  );
+      </Main>
+    </Box>
+  )
 }
