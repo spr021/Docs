@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
-import { alpha, makeStyles } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
-import AddIcon from '@material-ui/icons/Add';
-import firebase from '../../firebase';
-import { Avatar, Box, Button } from '@material-ui/core';
-import { useHistory } from 'react-router';
-import Doc from '../components/Doc';
+import React, { useEffect, useState } from "react"
+import AppBar from "@material-ui/core/AppBar"
+import Toolbar from "@material-ui/core/Toolbar"
+import IconButton from "@material-ui/core/IconButton"
+import Typography from "@material-ui/core/Typography"
+import InputBase from "@material-ui/core/InputBase"
+import { alpha, makeStyles } from "@material-ui/core/styles"
+import MenuIcon from "@material-ui/icons/Menu"
+import SearchIcon from "@material-ui/icons/Search"
+import AddIcon from "@material-ui/icons/Add"
+import { Avatar, Box, Button } from "@material-ui/core"
+import { useNavigate } from "react-router-dom"
+import Doc from "../components/Doc"
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
+import { getDatabase, onValue, ref } from "firebase/database"
+import { getDownloadURL, getStorage, ref as reff } from "firebase/storage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,93 +24,97 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
-    display: 'none',
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block",
     },
   },
   search: {
-    position: 'relative',
+    position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
+    "&:hover": {
       backgroundColor: alpha(theme.palette.common.white, 0.25),
     },
     marginLeft: 0,
     marginRight: 20,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing(1),
-      width: 'auto',
+      width: "auto",
     },
   },
   searchIcon: {
     padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   inputRoot: {
-    color: 'inherit',
+    color: "inherit",
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '12ch',
-      '&:focus': {
-        width: '20ch',
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      width: "12ch",
+      "&:focus": {
+        width: "20ch",
       },
     },
   },
-}));
+}))
 
 export default function Home() {
-  const classes = useStyles();
-  const history = useHistory();
+  const classes = useStyles()
+  const navigate = useNavigate()
   const [docs, setDocs] = useState([])
   const [user, setUser] = useState({
-    displayName: ""
+    displayName: "",
   })
-  const [avatar, setAvatar] = useState()
 
-  const signOut = () => {
-    firebase.auth().signOut().then(() => {
-      history.push("/sign-in");
-    }).catch((error) => {
-      alert(
-        `signOut in fail :(.`
-      );
-    });
+  const sign_Out = () => {
+    const auth = getAuth()
+    signOut(auth)
+      .then(() => {
+        navigate("/sign-in")
+      })
+      .catch((error) => {
+        alert(`signOut in fail :(.`)
+      })
   }
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((user) => {
+    const auth = getAuth()
+    const database = getDatabase()
+    const storage = getStorage();
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user)
-        firebase.storage().ref(user.photoURL).getDownloadURL()
+        getDownloadURL(reff(storage, user.photoURL))
           .then(img => {
-            setAvatar(img)
+            setUser({ ...user, photoURL: img })
           })
-        firebase.database().ref("docs").on("value", (snapshot) => {
+        const value = ref(database, "docs")
+        onValue(value, (snapshot) => {
           const objects = snapshot.val()
           const objectList = []
-          for(let item in objects) {
+          for (let item in objects) {
             objectList.push(objects[item])
           }
           setDocs(objectList)
         })
       } else {
-        history.push("/sign-in");
+        navigate("/sign-in")
       }
-    });
-  },[history])
+    })
+  }, [navigate])
 
   return (
     <div className={classes.root}>
@@ -122,12 +128,16 @@ export default function Home() {
           >
             <MenuIcon />
           </IconButton>
-          <Avatar className={classes.menuButton} alt={user.displayName} src={avatar} />
+          <Avatar
+            className={classes.menuButton}
+            alt={user.displayName}
+            src={user.photoURL}
+          />
           <Typography className={classes.title} variant="h6" noWrap>
             {user.displayName}
           </Typography>
           <IconButton
-            onClick={() => history.push("/new")}
+            onClick={() => navigate("/new")}
             edge="start"
             className={classes.menuButton}
             color="inherit"
@@ -145,17 +155,24 @@ export default function Home() {
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
-              inputProps={{ 'aria-label': 'search' }}
+              inputProps={{ "aria-label": "search" }}
             />
           </div>
-          <Button onClick={signOut} color="inherit">Sign Out</Button>
+          <Button onClick={sign_Out} color="inherit">
+            Sign Out
+          </Button>
         </Toolbar>
       </AppBar>
-      <Box display="flex" flexDirection="row" justifyContent="center" flexWrap="wrap">
-        {docs.map(doc => (
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="center"
+        flexWrap="wrap"
+      >
+        {docs.map((doc) => (
           <Doc key={doc.title} data={doc} />
         ))}
       </Box>
     </div>
-  );
+  )
 }

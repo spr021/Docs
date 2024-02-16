@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { Tooltip } from '@material-ui/core';
-import { useHistory } from 'react-router';
-import firebase from '../../firebase'
+import React, { useEffect, useState } from "react"
+import { makeStyles } from "@material-ui/core/styles"
+import Card from "@material-ui/core/Card"
+import CardHeader from "@material-ui/core/CardHeader"
+import CardMedia from "@material-ui/core/CardMedia"
+import CardContent from "@material-ui/core/CardContent"
+import CardActions from "@material-ui/core/CardActions"
+import Avatar from "@material-ui/core/Avatar"
+import IconButton from "@material-ui/core/IconButton"
+import Typography from "@material-ui/core/Typography"
+import { red } from "@material-ui/core/colors"
+import FavoriteIcon from "@material-ui/icons/Favorite"
+import ShareIcon from "@material-ui/icons/Share"
+import MoreVertIcon from "@material-ui/icons/MoreVert"
+import { Tooltip } from "@material-ui/core"
+import { useNavigate } from "react-router-dom"
+import { getDownloadURL, getStorage, ref } from "firebase/storage"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,35 +23,36 @@ const useStyles = makeStyles((theme) => ({
   },
   media: {
     height: 0,
-    paddingTop: '56.25%', // 16:9
+    paddingTop: "56.25%", // 16:9
   },
   discription: {
     textOverflow: "ellipsis",
     overflow: "hidden",
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
   },
   expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
+    transform: "rotate(0deg)",
+    marginLeft: "auto",
+    transition: theme.transitions.create("transform", {
       duration: theme.transitions.duration.shortest,
     }),
   },
   expandOpen: {
-    transform: 'rotate(180deg)',
+    transform: "rotate(180deg)",
   },
   avatar: {
     backgroundColor: red[500],
   },
-}));
+}))
 
 export default function Doc(props) {
-  const classes = useStyles();
-  const history = useHistory();
-  const [avatar, setAvatar] = useState()
+  const [avatar, setAvatar] = useState("")
+  const classes = useStyles()
+  const navigate = useNavigate()
+  const storage = getStorage()
 
   const openCard = () => {
-    history.push(`/doc/${props.data.title}?data=${props.data.data}`);
+    navigate(`/doc/${props.data.title}?data=${props.data.data}`)
   }
 
   const removeOnClick = (e) => {
@@ -59,18 +60,31 @@ export default function Doc(props) {
   }
 
   useEffect(() => {
-    firebase.storage().ref(props.data.avatar).getDownloadURL()
-    .then(img => {
-      setAvatar(img)
-    })
-  },[props.data.avatar])
+    getDownloadURL(ref(storage, props.data.avatar))
+      .then((img) => {
+        setAvatar(img)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, [props.data.avatar, storage])
 
   return (
     <Card onClick={openCard} className={classes.root}>
       <CardHeader
         avatar={
-          <Tooltip onClick={removeOnClick} title={props.data.author} placement="top" arrow>
-            <Avatar alt={props.data.author} src={avatar} aria-label="recipe" className={classes.avatar} />
+          <Tooltip
+            onClick={removeOnClick}
+            title={props.data.author}
+            placement="top"
+            arrow
+          >
+            <Avatar
+              alt={props.data.author}
+              src={avatar}
+              aria-label="recipe"
+              className={classes.avatar}
+            />
           </Tooltip>
         }
         action={
@@ -87,7 +101,12 @@ export default function Doc(props) {
         title={props.data.title}
       />
       <CardContent>
-        <Typography className={classes.discription} variant="body2" color="textSecondary" component="p">
+        <Typography
+          className={classes.discription}
+          variant="body2"
+          color="textSecondary"
+          component="p"
+        >
           {JSON.parse(props.data.data).blocks[0].text}
         </Typography>
       </CardContent>
@@ -100,5 +119,5 @@ export default function Doc(props) {
         </IconButton>
       </CardActions>
     </Card>
-  );
+  )
 }

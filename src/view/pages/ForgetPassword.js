@@ -9,9 +9,9 @@ import Grid from "@material-ui/core/Grid"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
-import firebase from "../../firebase"
-import { useHistory } from "react-router"
+import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
+import { getAuth, sendPasswordResetEmail } from "firebase/auth"
 
 function Copyright() {
   return (
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ForgetPasswordSide() {
   const classes = useStyles()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [email, setEmail] = useState("")
   const [error, setError] = useState({
     error: false,
@@ -69,11 +69,10 @@ export default function ForgetPasswordSide() {
   })
 
   const sendResetPassword = () => {
-    firebase
-      .auth()
-      .sendPasswordResetEmail(email)
+    const auth = getAuth()
+      sendPasswordResetEmail(auth, email)
       .then(() => {
-        history.push("/sign-in")
+        navigate("/sign-in")
       })
       .catch((error) => {
         var errorMessage = error.message

@@ -9,8 +9,8 @@ import Grid from "@material-ui/core/Grid"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
-import firebase from "../../firebase"
-import { useHistory } from "react-router"
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
+import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 
 function Copyright() {
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUpSide() {
   const classes = useStyles()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -71,16 +71,15 @@ export default function SignUpSide() {
   })
 
   const signUp = () => {
-    if(password === confirmPassword) {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
+    if (password === confirmPassword) {
+      const auth = getAuth()
+      createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           var user = userCredential.user
           if (user.displayName && user.photoURL) {
-            history.push("/")
+            navigate("/")
           } else {
-            history.push("/profile")
+            navigate("/profile")
           }
         })
         .catch((error) => {
@@ -90,13 +89,12 @@ export default function SignUpSide() {
             errorMessage,
           })
         })
-      }
-      else {
-        setError({
-          error: true,
-          errorMessage: "Password and Confirm password is not equal"
-        })
-      }
+    } else {
+      setError({
+        error: true,
+        errorMessage: "Password and Confirm password is not equal",
+      })
+    }
   }
 
   return (

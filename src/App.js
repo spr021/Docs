@@ -1,4 +1,4 @@
-import { HashRouter as Router, Switch, Route } from "react-router-dom"
+import { HashRouter as Router, Routes, Route } from "react-router-dom"
 import Home from "./view/pages/Home"
 import SignIn from "./view/pages/SignIn"
 import SignUp from "./view/pages/SignUp"
@@ -10,29 +10,15 @@ import Profile from "./view/pages/Profile"
 function App() {
   return (
     <Router>
-      <Switch>
-        <Route exact path="/sign-in">
-          <SignIn />
-        </Route>
-        <Route exact path="/sign-up">
-          <SignUp />
-        </Route>
-        <Route exact path="/forget-password">
-          <ForgetPassword />
-        </Route>
-        <Route exact path="/">
-          <Home />
-        </Route>
-        <Route exact path="/new">
-          <NewDoc />
-        </Route>
-        <Route exact path="/doc/:title">
-          <Doc />
-        </Route>
-        <Route exact path="/profile">
-          <Profile />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/forget-password" element={<ForgetPassword />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/new" element={<NewDoc />} />
+        <Route path="/doc/:title" element={<Doc />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
     </Router>
   )
 }

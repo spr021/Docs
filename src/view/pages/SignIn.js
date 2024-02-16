@@ -11,9 +11,9 @@ import Grid from "@material-ui/core/Grid"
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined"
 import Typography from "@material-ui/core/Typography"
 import { makeStyles } from "@material-ui/core/styles"
-import firebase from "../../firebase"
-import { useHistory } from "react-router"
+import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
 
 function Copyright() {
   return (
@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignInSide() {
   const classes = useStyles()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState({
@@ -72,15 +72,14 @@ export default function SignInSide() {
   })
 
   const logIn = () => {
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
+    const auth = getAuth()
+    signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         var user = userCredential.user
         if (user.displayName && user.photoURL) {
-          history.push("/")
+          navigate("/")
         } else {
-          history.push("/profile")
+          navigate("/profile")
         }
       })
       .catch((error) => {
@@ -93,15 +92,14 @@ export default function SignInSide() {
   }
 
   const logInWithTest = () => {
-    firebase
-      .auth()
-      .signInWithEmailAndPassword("admin@admin.com", "adminadmin")
+    const auth = getAuth()
+    signInWithEmailAndPassword(auth, "admin@admin.com", "adminadmin")
       .then((userCredential) => {
         var user = userCredential.user
         if (user.displayName && user.photoURL) {
-          history.push("/")
+          navigate("/")
         } else {
-          history.push("/profile")
+          navigate("/profile")
         }
       })
       .catch((error) => {
