@@ -6,7 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu"
 import AddIcon from "@mui/icons-material/Add"
 import { Box, Button, Container } from "@mui/material"
 import { useNavigate } from "react-router-dom"
-import Doc from "../components/Doc"
+import DocCard from "../components/DocCard"
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
 import { getDatabase, onValue, ref } from "firebase/database"
 import { getDownloadURL, getStorage, ref as reff } from "firebase/storage"
@@ -45,10 +45,13 @@ export default function Home() {
         onValue(value, (snapshot) => {
           const objects = snapshot.val()
           const objectList = []
+          Object.keys(objects).forEach((k) => (objects[k].id = k))
           for (let item in objects) {
             objectList.push(objects[item])
           }
           setDocs(objectList)
+        },{
+          onlyOnce: true,
         })
       } else {
         navigate("/sign-in")
@@ -95,7 +98,7 @@ export default function Home() {
         }}
       >
         {docs.map((doc) => (
-          <Doc key={doc.title} data={doc} />
+          <DocCard key={doc.id} data={doc} />
         ))}
       </Container>
     </Box>

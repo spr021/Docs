@@ -1,4 +1,3 @@
-import MUIRichTextEditor from "mui-rte"
 import { styled } from "@mui/material/styles"
 import React, { useState } from "react"
 import AppBar from "@mui/material/AppBar"
@@ -11,6 +10,7 @@ import { Box, Button, Input, TextField } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import { getAuth, signOut } from "firebase/auth"
 import { getDatabase, push, ref, set } from "firebase/database"
+import Editor from "../components/Editor"
 
 const Title = styled(Typography)(({ theme }) => ({
   flexGrow: 1,
@@ -140,15 +140,7 @@ export default function NewDoc() {
             </IconButton>
           </label>
         </Box>
-        <MUIRichTextEditor
-          label={
-            title.error
-              ? "This field is required !!!!"
-              : "Type something here..."
-          }
-          onSave={save}
-          inlineToolbar={true}
-        />
+        <Editor onSave={save} />
       </Box>
     </Box>
   )

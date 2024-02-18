@@ -91,7 +91,6 @@ export default function Profile() {
       selectedFile: URL.createObjectURL(event.target.files[0]),
       imageUploaded: 1,
     })
-    console.log("DDDD", event.target.files[0])
     set(ref(database, `users/${auth.currentUser.uid}`), {
       profile_picture: event.target.files[0],
     })

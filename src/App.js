@@ -7,8 +7,8 @@ import NewDoc from "./view/pages/NewDoc"
 import Doc from "./view/pages/Doc"
 import Profile from "./view/pages/Profile"
 import { ThemeProvider, StyledEngineProvider, createTheme } from "@mui/material/styles";
-import { red } from "@material-ui/core/colors"
-import { CssBaseline } from "@material-ui/core"
+import { red } from "@mui/material/colors"
+import CssBaseline from '@mui/material/CssBaseline';
 
 const theme = createTheme({
   palette: {
@@ -36,7 +36,7 @@ function App() {
             <Route path="/forget-password" element={<ForgetPassword />} />
             <Route path="/" element={<Home />} />
             <Route path="/new" element={<NewDoc />} />
-            <Route path="/doc/:title" element={<Doc />} />
+            <Route path="/docs/:id" element={<Doc />} />
             <Route path="/profile" element={<Profile />} />
           </Routes>
         </Router>

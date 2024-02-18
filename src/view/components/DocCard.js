@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react"
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 import CardMedia from "@mui/material/CardMedia"
-import CardContent from "@mui/material/CardContent"
 import CardActions from "@mui/material/CardActions"
 import Avatar from "@mui/material/Avatar"
 import IconButton from "@mui/material/IconButton"
-import Typography from "@mui/material/Typography"
 import { red } from "@mui/material/colors"
 import FavoriteIcon from "@mui/icons-material/Favorite"
 import ShareIcon from "@mui/icons-material/Share"
@@ -15,13 +13,13 @@ import { Tooltip } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import { getDownloadURL, getStorage, ref } from "firebase/storage"
 
-export default function Doc(props) {
+export default function DocCard({ data }) {
   const [avatar, setAvatar] = useState("")
   const navigate = useNavigate()
   const storage = getStorage()
 
   const openCard = () => {
-    navigate(`/doc/${props.data.title}?data=${props.data.data}`)
+    navigate(`/docs/${data.id}`)
   }
 
   const removeOnClick = (e) => {
@@ -29,14 +27,14 @@ export default function Doc(props) {
   }
 
   useEffect(() => {
-    getDownloadURL(ref(storage, props.data.avatar))
+    getDownloadURL(ref(storage, data.avatar))
       .then((img) => {
         setAvatar(img)
       })
       .catch((error) => {
         console.log(error)
       })
-  }, [props.data.avatar, storage])
+  }, [data.avatar, storage])
 
   return (
     <Card onClick={openCard} sx={{ maxWidth: 345, margin: "16px" }}>
@@ -44,12 +42,12 @@ export default function Doc(props) {
         avatar={
           <Tooltip
             onClick={removeOnClick}
-            title={props.data.author}
+            title={data.author}
             placement="top"
             arrow
           >
             <Avatar
-              alt={props.data.author}
+              alt={data.author}
               src={avatar}
               aria-label="recipe"
               sx={{ backgroundColor: red[500] }}
@@ -65,8 +63,8 @@ export default function Doc(props) {
             <MoreVertIcon />
           </IconButton>
         }
-        title={props.data.title}
-        subheader={props.data.date}
+        title={data.title}
+        subheader={data.date}
       />
       <CardMedia
         sx={{
@@ -74,23 +72,9 @@ export default function Doc(props) {
           paddingTop: "56.25%",
           // 16:9
         }}
-        image={props.data.cover}
-        title={props.data.title}
+        image={data.cover}
+        title={data.title}
       />
-      <CardContent>
-        <Typography
-          sx={{
-            textOverflow: "ellipsis",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-          }}
-          variant="body2"
-          color="textSecondary"
-          component="p"
-        >
-          {JSON.parse(props.data.data).blocks[0].text}
-        </Typography>
-      </CardContent>
       <CardActions disableSpacing>
         <IconButton
           onClick={removeOnClick}

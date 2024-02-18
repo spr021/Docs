@@ -1,6 +1,5 @@
-import MUIRichTextEditor from "mui-rte"
 import { styled } from "@mui/material/styles"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import AppBar from "@mui/material/AppBar"
 import Toolbar from "@mui/material/Toolbar"
 import IconButton from "@mui/material/IconButton"
@@ -8,8 +7,11 @@ import Typography from "@mui/material/Typography"
 import MenuIcon from "@mui/icons-material/Menu"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import { Box, Button } from "@mui/material"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate, useMatch } from "react-router-dom"
 import { getAuth, signOut } from "firebase/auth"
+import { RichTextReadOnly } from "mui-tiptap"
+import useExtensions from "../components/useExtentions"
+import { getDatabase, onValue, ref } from "firebase/database"
 
 const Title = styled(Typography)(({ theme }) => ({
   flexGrow: 1,
@@ -21,7 +23,23 @@ const Title = styled(Typography)(({ theme }) => ({
 
 export default function Doc() {
   const navigate = useNavigate()
-  let data = new URLSearchParams(useLocation().search).get("data")
+  const extensions = useExtensions()
+  const match = useMatch("docs/*")
+  const id = match.params["*"]
+  const [data, setData] = useState("")
+
+  useEffect(() => {
+    const database = getDatabase()
+    onValue(
+      ref(database, "docs/" + id),
+      (snapshot) => {
+        setData(snapshot.val())
+      },
+      {
+        onlyOnce: true,
+      }
+    )
+  }, [id])
 
   const sign_Out = () => {
     const auth = getAuth()
@@ -71,7 +89,7 @@ export default function Doc() {
           padding: "0 100px",
         }}
       >
-        <MUIRichTextEditor defaultValue={data} readOnly={true} />
+        <RichTextReadOnly content={data.data} extensions={extensions} />
         <div style={{ width: 100, height: 50 }}></div>
       </Box>
     </Box>
