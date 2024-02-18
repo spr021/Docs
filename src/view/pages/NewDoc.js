@@ -9,7 +9,16 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate"
 import { Box, Button, Input, TextField } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import { getAuth, signOut } from "firebase/auth"
-import { getDatabase, push, ref, set } from "firebase/database"
+import {
+  get,
+  getDatabase,
+  limitToLast,
+  orderByKey,
+  push,
+  query,
+  ref,
+  set,
+} from "firebase/database"
 import Editor from "../components/Editor"
 
 const Title = styled(Typography)(({ theme }) => ({
@@ -49,17 +58,21 @@ export default function NewDoc() {
     const database = getDatabase()
     const user = auth.currentUser
     if (title.text !== "" && data) {
-      const docsList = ref(database, "docs")
-      const newDoc = {
+      const docsListRef = ref(database, "docs")
+      const newDocRef = push(docsListRef)
+      set(newDocRef, {
         author: user.displayName,
         avatar: user.photoURL,
         title: title.text,
         date: new Date().toDateString(),
         cover: cover.selectedFile,
         data,
-      }
-      set(push(docsList, newDoc))
-      navigate(`/doc/${title.text}?data=${data}`)
+      })
+      const id = query(docsListRef, orderByKey(), limitToLast(1))
+      get(id).then((snapshot) => {
+        console.log()
+        navigate(`/docs/${Object.keys(snapshot.val())[0]}`)
+      })
     } else {
       setTitle({ ...title, error: true })
     }
