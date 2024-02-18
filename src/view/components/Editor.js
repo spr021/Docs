@@ -10,6 +10,7 @@ import {
 } from "mui-tiptap"
 import EditorMenuControls from "./EditorMenuContorols"
 import useExtensions from "./useExtentions"
+import { useNavigate } from "react-router-dom"
 
 function fileListToImageFiles(fileList) {
   return Array.from(fileList).filter((file) => {
@@ -18,16 +19,15 @@ function fileListToImageFiles(fileList) {
   })
 }
 
-const example =
-  '<h1>Hi this is new<br><br>dscsd</h1><p></p><p>dscsdcd</p><p></p><p><strong>ewfwef<em>ewfwefwe</em></strong><em>efw<u>fewwef<s>wefwef</s></u></em></p><p></p><p><span style="color: #bc5656de">dfvdfvdfv</span></p><p style="text-align: center">dfvdfvdfv</p><ol><li><p style="text-align: center">dfvdfv</p></li><li><p style="text-align: right">dfvdfvdfvdf</p></li><li><p>dfvdfvdfv</p></li><li><p>dfv</p></li></ol><blockquote><p>vdfdvdfvd</p></blockquote><p><code>sdfsdfsdf</code></p><img height="auto" style="text-align: center; aspect-ratio: 0.75078125" src="blob:http://localhost:3000/5a321e8d-0d19-4924-90b9-a777c32d9b70" alt="photo_2023-05-07_19-26-14.jpg" width="324"><p></p><p></p><table style="minWidth: 75px"><colgroup><col><col><col></colgroup><tbody><tr><th colspan="1" rowspan="1"><p>csdsdc</p></th><th colspan="1" rowspan="1"><p></p></th><th colspan="1" rowspan="1"><p></p></th></tr><tr><td colspan="1" rowspan="1"><p></p></td><td colspan="1" rowspan="1"><p></p></td><td colspan="1" rowspan="1"><p></p></td></tr><tr><td colspan="1" rowspan="1"><p></p></td><td colspan="1" rowspan="1"><p>scdcsdcsdc</p></td><td colspan="1" rowspan="1"><p>sdcsdcsdc</p></td></tr></tbody></table><p>vdfvdfvdfv</p><p></p><pre><code>dfvdfv</code></pre>'
-
 export default function Editor({ onSave }) {
   const extensions = useExtensions({
     placeholder: "Add your own content here...",
   })
   const rteRef = useRef(null)
+  const navigate = useNavigate()
   const [isEditable, setIsEditable] = useState(true)
   const [showMenuBar, setShowMenuBar] = useState(true)
+  const draft = localStorage.getItem("draft") ?? ""
 
   const handleNewImageFiles = useCallback((files, insertPosition) => {
     if (!rteRef.current?.editor) {
@@ -105,6 +105,11 @@ export default function Editor({ onSave }) {
     [handleNewImageFiles]
   )
 
+  const SaveToDraft = () => {
+    localStorage.setItem("draft", rteRef.current?.editor?.getHTML() ?? "")
+    navigate("/")
+  }
+
   return (
     <Box
       sx={{
@@ -119,7 +124,7 @@ export default function Editor({ onSave }) {
       <RichTextEditor
         ref={rteRef}
         extensions={extensions}
-        content={example}
+        content={draft}
         editable={isEditable}
         editorProps={{
           handleDrop: handleDrop,
@@ -181,6 +186,9 @@ export default function Editor({ onSave }) {
                 }}
               >
                 Save
+              </Button>
+              <Button variant="contained" size="small" onClick={SaveToDraft}>
+                Save To Draft
               </Button>
             </Stack>
           ),
