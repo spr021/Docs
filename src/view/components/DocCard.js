@@ -73,7 +73,7 @@ export default function DocCard({ data }) {
           // 16:9
         }}
         image={data.cover}
-        title={data.title}
+        title={data.alt}
       />
       <CardActions disableSpacing>
         <IconButton

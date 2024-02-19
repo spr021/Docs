@@ -5,8 +5,7 @@ import Toolbar from "@mui/material/Toolbar"
 import IconButton from "@mui/material/IconButton"
 import Typography from "@mui/material/Typography"
 import MenuIcon from "@mui/icons-material/Menu"
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate"
-import { Box, Button, Input, TextField } from "@mui/material"
+import { Box, Button } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import { getAuth, signOut } from "firebase/auth"
 import {
@@ -20,6 +19,7 @@ import {
   set,
 } from "firebase/database"
 import Editor from "../components/Editor"
+import Preview from "../components/Preview"
 
 const Title = styled(Typography)(({ theme }) => ({
   flexGrow: 1,
@@ -31,33 +31,26 @@ const Title = styled(Typography)(({ theme }) => ({
 
 export default function NewDoc() {
   const navigate = useNavigate()
+  const auth = getAuth()
+  const [docText, setDocText] = useState("")
   const [title, setTitle] = useState({ text: "", error: false })
   const [cover, setCover] = useState({
     mainState: "initial",
     imageUploaded: 0,
     selectedFile: null,
+    preview: null,
+    alt: "",
   })
+  const [step, setStep] = useState(1)
 
-  const handleUploadClick = (event) => {
-    const reader = new FileReader()
-
-    reader.onloadend = () => {
-      setCover({ ...cover, selectedFile: [reader.result] })
-    }
-
-    setCover({
-      mainState: "uploaded",
-      selectedFile: event.target.files[0],
-      imageUploaded: 1,
-    })
-    // i have to store in storage then set refrence to the database
+  const nextStep = () => {
+    setStep(step + 1)
   }
 
-  const save = (data) => {
-    const auth = getAuth()
+  const save = () => {
     const database = getDatabase()
     const user = auth.currentUser
-    if (title.text !== "" && data) {
+    if (title.text !== "") {
       const docsListRef = ref(database, "docs")
       const newDocRef = push(docsListRef)
       set(newDocRef, {
@@ -66,11 +59,11 @@ export default function NewDoc() {
         title: title.text,
         date: new Date().toDateString(),
         cover: cover.selectedFile,
-        data,
+        alt: cover.alt,
+        data: docText,
       })
       const id = query(docsListRef, orderByKey(), limitToLast(1))
       get(id).then((snapshot) => {
-        console.log()
         navigate(`/docs/${Object.keys(snapshot.val())[0]}`)
       })
     } else {
@@ -118,42 +111,18 @@ export default function NewDoc() {
           padding: "0 100px",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            p: "16px",
-            alignItems: "center",
-          }}
-          display="flex"
-          justifyContent="center"
-        >
-          <TextField
-            error={title.error}
-            required
-            onChange={(e) => setTitle({ ...title, text: e.target.value })}
-            label="Title"
-            variant="outlined"
+        {step === 1 ? (
+          <Editor setDocText={setDocText} nextStep={nextStep} />
+        ) : (
+          <Preview
+            onSave={save}
+            title={title}
+            setTitle={setTitle}
+            cover={cover}
+            setCover={setCover}
+            user={auth.currentUser}
           />
-          <Input
-            inputProps={{ accept: "image/*" }}
-            onChange={handleUploadClick}
-            sx={{ display: "none" }}
-            id="icon-button-file"
-            type="file"
-          />
-          <label htmlFor="icon-button-file">
-            <IconButton
-              color="primary"
-              aria-label="upload picture"
-              component="span"
-              size="large"
-            >
-              <AddPhotoAlternateIcon />
-            </IconButton>
-          </label>
-        </Box>
-        <Editor onSave={save} />
+        )}
       </Box>
     </Box>
   )

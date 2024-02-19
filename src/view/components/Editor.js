@@ -19,7 +19,7 @@ function fileListToImageFiles(fileList) {
   })
 }
 
-export default function Editor({ onSave }) {
+export default function Editor({ nextStep, setDocText }) {
   const extensions = useExtensions({
     placeholder: "Add your own content here...",
   })
@@ -113,7 +113,7 @@ export default function Editor({ onSave }) {
   return (
     <Box
       sx={{
-        mb: 4,
+        my: 4,
         "& .ProseMirror": {
           "& h1, & h2, & h3, & h4, & h5, & h6": {
             scrollMarginTop: showMenuBar ? 50 : 0,
@@ -142,56 +142,6 @@ export default function Editor({ onSave }) {
           // Below is an example of adding a toggle within the outlined field
           // for showing/hiding the editor menu bar, and a "submit" button for
           // saving/viewing the HTML content
-          footer: (
-            <Stack
-              direction="row"
-              spacing={2}
-              sx={{
-                borderTopStyle: "solid",
-                borderTopWidth: 1,
-                borderTopColor: (theme) => theme.palette.divider,
-                py: 1,
-                px: 1.5,
-              }}
-            >
-              <MenuButton
-                value="formatting"
-                tooltipLabel={
-                  showMenuBar ? "Hide formatting" : "Show formatting"
-                }
-                size="small"
-                onClick={() => setShowMenuBar((currentState) => !currentState)}
-                selected={showMenuBar}
-                IconComponent={TextFields}
-              />
-
-              <MenuButton
-                value="formatting"
-                tooltipLabel={
-                  isEditable
-                    ? "Prevent edits (use read-only mode)"
-                    : "Allow edits"
-                }
-                size="small"
-                onClick={() => setIsEditable((currentState) => !currentState)}
-                selected={!isEditable}
-                IconComponent={isEditable ? Lock : LockOpen}
-              />
-
-              <Button
-                variant="contained"
-                size="small"
-                onClick={() => {
-                  onSave(rteRef.current?.editor?.getHTML() ?? "")
-                }}
-              >
-                Save
-              </Button>
-              <Button variant="contained" size="small" onClick={SaveToDraft}>
-                Save To Draft
-              </Button>
-            </Stack>
-          ),
         }}
       >
         {() => (
@@ -201,6 +151,48 @@ export default function Editor({ onSave }) {
           </>
         )}
       </RichTextEditor>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          py: 1,
+          px: 1.5,
+        }}
+      >
+        <MenuButton
+          value="formatting"
+          tooltipLabel={showMenuBar ? "Hide formatting" : "Show formatting"}
+          size="small"
+          onClick={() => setShowMenuBar((currentState) => !currentState)}
+          selected={showMenuBar}
+          IconComponent={TextFields}
+        />
+
+        <MenuButton
+          value="formatting"
+          tooltipLabel={
+            isEditable ? "Prevent edits (use read-only mode)" : "Allow edits"
+          }
+          size="small"
+          onClick={() => setIsEditable((currentState) => !currentState)}
+          selected={!isEditable}
+          IconComponent={isEditable ? Lock : LockOpen}
+        />
+
+        <Button
+          variant="contained"
+          size="small"
+          onClick={() => {
+            nextStep()
+            setDocText(rteRef.current?.editor?.getHTML() ?? "")
+          }}
+        >
+          Save
+        </Button>
+        <Button variant="contained" size="small" onClick={SaveToDraft}>
+          Save To Draft
+        </Button>
+      </Stack>
     </Box>
   )
 }
