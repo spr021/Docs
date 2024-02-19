@@ -23,7 +23,7 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth"
-import { getDatabase, ref, set } from "firebase/database"
+import { getStorage, uploadBytes, ref } from "firebase/storage"
 
 const Title = styled(Typography)(({ theme }) => ({
   flexGrow: 1,
@@ -79,7 +79,7 @@ export default function Profile() {
 
   const handleUploadClick = (event) => {
     const auth = getAuth()
-    const database = getDatabase()
+    const storage = getStorage()
     const reader = new FileReader()
 
     reader.onloadend = () => {
@@ -91,10 +91,9 @@ export default function Profile() {
       selectedFile: URL.createObjectURL(event.target.files[0]),
       imageUploaded: 1,
     })
-    set(ref(database, `users/${auth.currentUser.uid}`), {
-      profile_picture: event.target.files[0],
-    })
-      .then(() => {
+    const storageRef = ref(storage, `users/${auth.currentUser.uid}/profile.jpg`)
+    uploadBytes(storageRef, event.target.files[0])
+      .then((snapshot) => {
         if (auth.currentUser.displayName && auth.currentUser.photoURL) {
           navigate("/")
         }
@@ -106,13 +105,16 @@ export default function Profile() {
 
   const save = () => {
     const auth = getAuth()
-    const database = getDatabase()
+    const storage = getStorage()
     if (displayName.value) {
       setDisplayName({ ...displayName, error: false })
+      const databaseRef = ref(
+        storage,
+        `users/${auth.currentUser.uid}/profile.jpg`
+      )
       updateProfile(auth.currentUser, {
         displayName: displayName.value,
-        photoURL: ref(database, `users/${auth.currentUser.uid}/profile.jpg`)
-          .fullPath,
+        photoURL: databaseRef.fullPath,
       })
         .then(() => {
           if (auth.currentUser.displayName && auth.currentUser.photoURL) {
