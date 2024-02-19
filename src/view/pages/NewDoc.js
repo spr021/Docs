@@ -57,7 +57,7 @@ export default function NewDoc() {
         author: user.displayName,
         avatar: user.photoURL,
         title: title.text,
-        date: new Date(),
+        date: new Date().getTime(),
         cover: cover.selectedFile,
         alt: cover.alt,
         data: docText,
