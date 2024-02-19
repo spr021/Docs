@@ -12,6 +12,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert"
 import { Tooltip } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import { getDownloadURL, getStorage, ref } from "firebase/storage"
+import Dayjs from "../../lib/dayjs/dayjs"
 
 export default function DocCard({ data }) {
   const [avatar, setAvatar] = useState("")
@@ -64,7 +65,7 @@ export default function DocCard({ data }) {
           </IconButton>
         }
         title={data.title}
-        subheader={data.date}
+        subheader={Dayjs(data.date).fromNow()}
       />
       <CardMedia
         sx={{
