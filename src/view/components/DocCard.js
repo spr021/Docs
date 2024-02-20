@@ -16,6 +16,7 @@ import Dayjs from "../../lib/dayjs/dayjs"
 
 export default function DocCard({ data }) {
   const [avatar, setAvatar] = useState("")
+  const [cover, setCover] = useState("")
   const navigate = useNavigate()
   const storage = getStorage()
 
@@ -36,6 +37,18 @@ export default function DocCard({ data }) {
         console.log(error)
       })
   }, [data.avatar, storage])
+
+  useEffect(() => {
+    if (data.cover) {
+      getDownloadURL(ref(storage, data.cover))
+        .then((img) => {
+          setCover(img)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  }, [data.cover, storage])
 
   return (
     <Card onClick={openCard} sx={{ maxWidth: 345, margin: "16px" }}>
@@ -73,7 +86,7 @@ export default function DocCard({ data }) {
           paddingTop: "56.25%",
           // 16:9
         }}
-        image={data.cover}
+        image={cover}
         title={data.alt}
       />
       <CardActions disableSpacing>

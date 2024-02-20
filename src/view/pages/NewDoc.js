@@ -8,18 +8,10 @@ import MenuIcon from "@mui/icons-material/Menu"
 import { Box, Button } from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import { getAuth, signOut } from "firebase/auth"
-import {
-  get,
-  getDatabase,
-  limitToLast,
-  orderByKey,
-  push,
-  query,
-  ref,
-  set,
-} from "firebase/database"
+import { getDatabase, push, ref, set } from "firebase/database"
 import Editor from "../components/Editor"
 import Preview from "../components/Preview"
+import { getStorage, ref as reff, uploadBytes } from "firebase/storage"
 
 const Title = styled(Typography)(({ theme }) => ({
   flexGrow: 1,
@@ -40,6 +32,7 @@ export default function NewDoc() {
     selectedFile: null,
     preview: null,
     alt: "",
+    error: false,
   })
   const [step, setStep] = useState(1)
 
@@ -49,22 +42,25 @@ export default function NewDoc() {
 
   const save = () => {
     const database = getDatabase()
+    const storage = getStorage()
     const user = auth.currentUser
     if (title.text !== "") {
       const docsListRef = ref(database, "docs")
       const newDocRef = push(docsListRef)
+      const storageRef = reff(storage, `docs-media/${newDocRef.key}/cover.jpg`)
       set(newDocRef, {
         author: user.displayName,
         avatar: user.photoURL,
         title: title.text,
         date: new Date().getTime(),
-        cover: cover.selectedFile,
+        cover: cover.selectedFile ? storageRef.fullPath : "",
         alt: cover.alt,
         data: docText,
-      })
-      const id = query(docsListRef, orderByKey(), limitToLast(1))
-      get(id).then((snapshot) => {
-        navigate(`/docs/${Object.keys(snapshot.val())[0]}`)
+      }).then(() => {
+        if (cover.selectedFile) {
+          uploadBytes(storageRef, cover.selectedFile)
+        }
+        navigate(`/docs/${newDocRef.key}`)
       })
     } else {
       setTitle({ ...title, error: true })

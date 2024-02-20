@@ -29,20 +29,25 @@ export default function Preview({
 }) {
   const [avatar, setAvatar] = useState("")
   const handleUploadClick = (event) => {
-    const reader = new FileReader()
+    if (event.target.files[0].size < 1000000) {
+      const reader = new FileReader()
 
-    reader.onloadend = () => {
-      setCover({ ...cover, selectedFile: [reader.result] })
+      reader.onloadend = () => {
+        setCover({ ...cover, selectedFile: [reader.result] })
+      }
+
+      setCover({
+        ...cover,
+        mainState: "uploaded",
+        selectedFile: event.target.files[0],
+        imageUploaded: 1,
+        preview: URL.createObjectURL(event.target.files[0]),
+        error: false,
+      })
+    } else {
+      event.target.value = ""
+      setCover({ ...cover, error: true })
     }
-
-    setCover({
-      ...cover,
-      mainState: "uploaded",
-      selectedFile: event.target.files[0],
-      imageUploaded: 1,
-      preview: URL.createObjectURL(event.target.files[0]),
-    })
-    // i have to store in storage then set refrence to the database
   }
 
   const removeOnClick = (e) => {
@@ -135,9 +140,9 @@ export default function Preview({
           </Card>
         </Box>
         <Box
-        display={"flex"}
-        flexDirection={"column"}
-        gap={2}
+          display={"flex"}
+          flexDirection={"column"}
+          gap={2}
           sx={{
             mt: 4,
           }}
@@ -163,7 +168,7 @@ export default function Preview({
           />
           <label htmlFor="icon-button-file">
             <IconButton
-              color="primary"
+              color={cover.error ? "error" : "primary"}
               aria-label="upload picture"
               component="span"
               size="large"
