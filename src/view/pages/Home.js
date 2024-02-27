@@ -38,7 +38,7 @@ export default function Home() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user)
-        getDownloadURL(reff(storage, user.photoURL)).then((img) => {
+        getDownloadURL(reff(storage, `users/${user.uid}/profile.jpg`)).then((img) => {
           setUser({ ...user, photoURL: img })
         })
         const value = ref(database, "docs")

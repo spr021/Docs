@@ -11,12 +11,18 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth"
 import RandomWallpaper from "../components/RandomWallpaper"
-import { FormControl } from "@mui/material"
+import { Divider, FormControl } from "@mui/material"
 import Copyright from "../components/Copyright"
+import { GoogleProvider } from "../../lib/firebase/firebase"
 
 export default function SignInSide() {
+  const auth = getAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -26,7 +32,6 @@ export default function SignInSide() {
   })
 
   const logIn = () => {
-    const auth = getAuth()
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         var user = userCredential.user
@@ -46,10 +51,28 @@ export default function SignInSide() {
   }
 
   const logInWithTest = () => {
-    const auth = getAuth()
     signInWithEmailAndPassword(auth, "admin@admin.com", "adminadmin")
       .then((userCredential) => {
         var user = userCredential.user
+        if (user.displayName && user.photoURL) {
+          navigate("/")
+        } else {
+          navigate("/profile")
+        }
+      })
+      .catch((error) => {
+        var errorMessage = error.message
+        setError({
+          error: true,
+          errorMessage,
+        })
+      })
+  }
+
+  const logInWithGoogle = () => {
+    signInWithPopup(auth, GoogleProvider)
+      .then((result) => {
+        var user = result.user
         if (user.displayName && user.photoURL) {
           navigate("/")
         } else {
@@ -71,7 +94,7 @@ export default function SignInSide() {
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <Box
           sx={{
-            margin: (theme) => theme.spacing(8, 4),
+            margin: (theme) => theme.spacing(4),
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -133,6 +156,30 @@ export default function SignInSide() {
               sx={{ margin: (theme) => theme.spacing(3, 0, 2) }}
             >
               Sign In
+            </Button>
+            <Divider
+              sx={{ margin: (theme) => theme.spacing(1, 0), color: "gray" }}
+            >
+              OR
+            </Divider>
+            <Button
+              onClick={logInWithGoogle}
+              fullWidth
+              variant="contained"
+              sx={{
+                margin: (theme) => theme.spacing(2, 0, 3),
+                backgroundImage: "url(./docs/snwg.svg)",
+                backgroundSize: "contain",
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                color: "transparent",
+                backgroundColor: "#F2F2F2",
+                "&:hover": {
+                  backgroundColor: "#F2F2F2",
+                },
+              }}
+            >
+              .
             </Button>
             <Grid container>
               <Grid item xs>
