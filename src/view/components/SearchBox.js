@@ -43,13 +43,14 @@ const SeachInput = styled(Box)(({ theme }) => ({
   },
 }))
 
-export default function SeachBox() {
+export default function SeachBox({ setSearchText }) {
   return (
     <SeachInput>
       <Box>
         <SearchIcon />
       </Box>
       <InputBase
+        onChange={(e) => setSearchText(e.target.value)}
         placeholder="Search…"
         inputProps={{ "aria-label": "search" }}
       />

@@ -14,7 +14,9 @@ import Profile from "../components/Profile"
 
 export default function Home() {
   const navigate = useNavigate()
+  const [searchText, setSearchText] = useState("")
   const [docs, setDocs] = useState([])
+  const [visibleDocs, setVisibleDocs] = useState([])
   const [user, setUser] = useState({
     displayName: "",
   })
@@ -37,22 +39,31 @@ export default function Home() {
       if (user) {
         setUser(user)
         const value = ref(database, "docs")
-        onValue(value, (snapshot) => {
-          const objects = snapshot.val()
-          const objectList = []
-          Object.keys(objects).forEach((k) => (objects[k].id = k))
-          for (let item in objects) {
-            objectList.push(objects[item])
+        onValue(
+          value,
+          (snapshot) => {
+            const objects = snapshot.val()
+            const objectList = []
+            Object.keys(objects).forEach((k) => (objects[k].id = k))
+            for (let item in objects) {
+              objectList.push(objects[item])
+            }
+            setDocs(objectList)
+            setVisibleDocs(objectList)
+          },
+          {
+            onlyOnce: true,
           }
-          setDocs(objectList)
-        },{
-          onlyOnce: true,
-        })
+        )
       } else {
         navigate("/sign-in")
       }
     })
   }, [navigate])
+
+  useEffect(() => {
+    setVisibleDocs(docs.filter((doc) => doc.title.toLowerCase().includes(searchText.toLowerCase())))
+  },[searchText, docs])
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -78,7 +89,7 @@ export default function Home() {
           >
             <AddIcon />
           </IconButton>
-          <SeachBox />
+          <SeachBox setSearchText={setSearchText} />
           <Button onClick={sign_Out} color="inherit">
             Sign Out
           </Button>
@@ -92,7 +103,7 @@ export default function Home() {
           flexWrap: "wrap",
         }}
       >
-        {docs.map((doc) => (
+        {visibleDocs.map((doc) => (
           <DocCard key={doc.id} data={doc} />
         ))}
       </Container>
