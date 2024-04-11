@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom"
 import DocCard from "../components/DocCard"
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
 import { getDatabase, onValue, ref } from "firebase/database"
-import { getDownloadURL, getStorage, ref as reff } from "firebase/storage"
 import SeachBox from "../components/SearchBox"
 import Profile from "../components/Profile"
 
@@ -34,13 +33,9 @@ export default function Home() {
   useEffect(() => {
     const auth = getAuth()
     const database = getDatabase()
-    const storage = getStorage()
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user)
-        getDownloadURL(reff(storage, `users/${user.uid}/profile.jpg`)).then((img) => {
-          setUser({ ...user, photoURL: img })
-        })
         const value = ref(database, "docs")
         onValue(value, (snapshot) => {
           const objects = snapshot.val()

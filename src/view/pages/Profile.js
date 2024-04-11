@@ -23,7 +23,7 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth"
-import { getStorage, uploadBytes, ref } from "firebase/storage"
+import { getStorage, uploadBytes, ref, getDownloadURL } from "firebase/storage"
 
 const Title = styled(Typography)(({ theme }) => ({
   flexGrow: 1,
@@ -92,15 +92,9 @@ export default function Profile() {
       imageUploaded: 1,
     })
     const storageRef = ref(storage, `users/${auth.currentUser.uid}/profile.jpg`)
-    uploadBytes(storageRef, event.target.files[0])
-      .then((snapshot) => {
-        if (auth.currentUser.displayName && auth.currentUser.photoURL) {
-          navigate("/")
-        }
-      })
-      .catch((error) => {
-        //error
-      })
+    uploadBytes(storageRef, event.target.files[0]).catch((error) => {
+      //error
+    })
   }
 
   const save = () => {
@@ -112,10 +106,13 @@ export default function Profile() {
         storage,
         `users/${auth.currentUser.uid}/profile.jpg`
       )
-      updateProfile(auth.currentUser, {
-        displayName: displayName.value,
-        photoURL: databaseRef.fullPath,
-      })
+      getDownloadURL(databaseRef)
+        .then((profileURL) => {
+          updateProfile(auth.currentUser, {
+            displayName: displayName.value,
+            photoURL: profileURL,
+          })
+        })
         .then(() => {
           if (auth.currentUser.displayName && auth.currentUser.photoURL) {
             navigate("/")
